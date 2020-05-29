@@ -216,8 +216,7 @@ def trainIters(encoder, decoder,training_pairs, validation_pairs, sc, epochs=10,
     training_pairs = sum(training_pairs, [])
     criterion = nn.CrossEntropyLoss()
     n_iters = len(training_pairs)
-    bestloss = 1e3
-    print(report_val)
+    bestloss = 1e10
     for iter, training_pair in enumerate(training_pairs, start=1):
         input_tensor = training_pair[0]
         target_tensor = training_pair[1]
@@ -232,6 +231,7 @@ def trainIters(encoder, decoder,training_pairs, validation_pairs, sc, epochs=10,
                 target_tensor = validation_pair[1]
                 val_loss += train(input_tensor, target_tensor, encoder, 
                                  decoder, encoder_optimizer, decoder_optimizer, teacher_forcing_ratio=-1, criterion, update=False)
+            val_loss /= len(validation_pairs)
             if val_loss < bestloss:
                 bestloss = val_loss
             else:
